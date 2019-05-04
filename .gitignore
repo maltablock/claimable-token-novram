@@ -1,0 +1,4 @@
+*.wasm
+.vscode
+/*.yml
+/node_modules
