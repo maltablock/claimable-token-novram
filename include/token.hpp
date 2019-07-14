@@ -4,8 +4,8 @@
  */
 #pragma once
 
-#include <eosiolib/asset.hpp>
-#include <eosiolib/eosio.hpp>
+#include <eosio/asset.hpp>
+#include <eosio/eosio.hpp>
 
 
 namespace eosio {
@@ -34,6 +34,9 @@ namespace eosio {
                            name  to,
                            asset        quantity,
                            string       memo );
+
+         ACTION open( const name& owner, const symbol& symbol, const name& ram_payer );
+         ACTION close( const name& owner, const symbol& symbol );
 
          static asset get_supply( name token_contract_account, symbol_code sym_code )
          {
