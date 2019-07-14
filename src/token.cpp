@@ -191,6 +191,38 @@ void token::recover( name owner, const symbol& sym ) {
   }
 }
 
+
+void token::open( const name& owner, const symbol& symbol, const name& ram_payer )
+{
+   require_auth( ram_payer );
+
+   check( is_account( owner ), "owner account does not exist" );
+
+   auto sym_code_raw = symbol.code().raw();
+   stats statstable( get_self(), sym_code_raw );
+   const auto& st = statstable.get( sym_code_raw, "symbol does not exist" );
+   check( st.supply.symbol == symbol, "symbol precision mismatch" );
+
+   accounts acnts( get_self(), owner.value );
+   auto it = acnts.find( sym_code_raw );
+   if( it == acnts.end() ) {
+      acnts.emplace( ram_payer, [&]( auto& a ){
+        a.balance = asset{0, symbol};
+        a.claimed = true;
+      });
+   }
+}
+
+void token::close( const name& owner, const symbol& symbol )
+{
+   require_auth( owner );
+   accounts acnts( get_self(), owner.value );
+   auto it = acnts.find( symbol.code().raw() );
+   check( it != acnts.end(), "Balance row already deleted or never existed. Action won't have any effect." );
+   check( it->balance.amount == 0, "Cannot close because the balance is not zero." );
+   acnts.erase( it );
+}
+
 void token::sub_balance( name owner, asset value ) {
   auto sym_code_raw = value.symbol.code().raw();
   accounts from_acnts( _self, owner.value );
