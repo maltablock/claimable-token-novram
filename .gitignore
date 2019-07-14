@@ -2,3 +2,4 @@
 .vscode
 /*.yml
 /node_modules
+/build
