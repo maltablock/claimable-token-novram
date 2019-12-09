@@ -255,4 +255,4 @@ void token::add_balance( name owner, asset value, name ram_payer, bool claimed )
 
 } /// namespace eosio
 
-EOSIO_DISPATCH(eosio::token, (create)(update)(issue)(transfer)(claim)(recover)(burn) )
+EOSIO_DISPATCH(eosio::token, (create)(update)(issue)(transfer)(claim)(recover)(burn)(open) )
