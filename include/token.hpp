@@ -23,17 +23,17 @@ namespace eosio {
          ACTION update( name issuer,
                       asset maximum_supply);
 
-         ACTION issue( name to, asset quantity, string memo );
+         ACTION issue( const name& to, const asset& quantity, const string& memo );
          ACTION burn( name from, asset quantity );
          
          ACTION claim( name owner, const symbol& sym );
          
          ACTION recover( name owner, const symbol& sym );
          
-         ACTION transfer(  name  from,
-                           name  to,
-                           asset        quantity,
-                           string       memo );
+         ACTION transfer( const name&    from,
+                      const name&    to,
+                      const asset&   quantity,
+                      const string&  memo );
 
          ACTION open( const name& owner, const symbol& symbol, const name& ram_payer );
          ACTION close( const name& owner, const symbol& symbol );
