@@ -54,16 +54,18 @@ void token::update( name  issuer,
 }
 
 
-void token::issue( name to, asset quantity, string memo )
+
+void token::issue( const name& to, const asset& quantity, const string& memo )
 {
     auto sym = quantity.symbol;
     check( sym.is_valid(), "invalid symbol name" );
     check( memo.size() <= 256, "memo has more than 256 bytes" );
 
-    stats statstable( _self, sym.code().raw() );
+    stats statstable( get_self(), sym.code().raw() );
     auto existing = statstable.find( sym.code().raw() );
     check( existing != statstable.end(), "token with symbol does not exist, create token before issue" );
     const auto& st = *existing;
+    check( to == st.issuer, "tokens can only be issued to issuer account" );
 
     require_auth( st.issuer );
     check( quantity.is_valid(), "invalid quantity" );
@@ -77,13 +79,8 @@ void token::issue( name to, asset quantity, string memo )
     });
 
     add_balance( st.issuer, quantity, st.issuer, true );
-
-    if( to != st.issuer ) {
-      SEND_INLINE_ACTION( *this, transfer, { {st.issuer, "issuer"_n} },
-                          { st.issuer, to, quantity, memo }
-      );
-    }
 }
+
 
 void token::burn( name from, asset quantity )
 {
@@ -108,10 +105,10 @@ void token::burn( name from, asset quantity )
     sub_balance( from, quantity );
 }
 
-void token::transfer( name    from,
-                      name    to,
-                      asset   quantity,
-                      string  memo )
+void token::transfer( const name&    from,
+                      const name&    to,
+                      const asset&   quantity,
+                      const string&  memo )
 {
     check( from != to, "cannot transfer to self" );
     require_auth( from );
